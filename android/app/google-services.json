@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "467235841699",
+    "project_id": "tran-app-bded3",
+    "storage_bucket": "tran-app-bded3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467235841699:android:2cf89a392b687122eec116",
+        "android_client_info": {
+          "package_name": "com.apptrash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsBt6MIS78YZ5lG9wft0iuUclLwt9ILfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

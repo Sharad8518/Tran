@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="41" height="28" viewBox="0 0 41 28">
+  <defs>
+    <clipPath id="clip-path">
+      <rect width="41" height="28" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Header_Menu_Icon" data-name="Header Menu Icon" clip-path="url(#clip-path)">
+    <path id="sort_-_material" data-name="sort - material" d="M13.666,27H0V22.091H13.666V27ZM27.333,15.954H0V11.046H27.333v4.907ZM41,4.909H0V0H41V4.907Z" transform="translate(0 0)" fill="#549cff"/>
+  </g>
+</svg>

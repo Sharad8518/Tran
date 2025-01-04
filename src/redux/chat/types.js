@@ -1,0 +1,6 @@
+export const SET_CHAT_IDS = "SET_CHAT_IDS"
+export const SET_ACTIVE_CHAT_ID = "SET_ACTIVE_CHAT_ID"
+export const SET_MESSAGES = "SET_MESSAGES"
+export const SET_UNREAD_COUNT = "SET_UNREAD_COUNT"
+export const APPEND_MESSAGE = "APPEND_MESSAGE"
+export const EXIT_CHAT = "EXIT_CHAT"
