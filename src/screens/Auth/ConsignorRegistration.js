@@ -92,19 +92,20 @@ const ConsignorRegistration = props => {
             district: data.district,
             state: data.state,
             adminName: data.adminName,
-            userName: params?.username,
-            contact: params?.contact,
-            email: params.email.toLowerCase(),
-            password: params.password,
-            role: params.role,
+            userName: params?.username || '',
+            contact: params?.contact || '',
+            email: params?.email?.toLowerCase() || '',
+            password: params?.password || '',
+            role: params?.role || '',
           };
           axios
-            .post('/register', payload)
+            .post('/users/register', payload)
             .then(res => {
               setLoading(false);
+              console.log('API Response:', res.data); // Debugging
               if (!res.data.success) {
                 setToast({
-                  text: !!res.data.msg ? res.data.msg : res.data.error,
+                  text: res.data.msg || res.data.error || 'Unknown error occurred',
                   styles: 'error',
                 });
               } else {
@@ -117,8 +118,9 @@ const ConsignorRegistration = props => {
             })
             .catch(error => {
               setLoading(false);
+              console.error('API Error:', error); // Debugging
               setToast({
-                text: errorMessage(error).message,
+                text: errorMessage(error).message || 'An error occurred',
                 styles: 'error',
               });
             });

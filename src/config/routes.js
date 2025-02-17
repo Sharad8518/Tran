@@ -94,7 +94,7 @@ export const ConsignerNavigator = () => {
       <Consigner.Screen
         options={{
           headerShown: true,
-          header: props => <Header name="New Booking" />,
+          header: props => <Header name="" />,
         }}
         name="NewBooking"
         component={NewBooking}

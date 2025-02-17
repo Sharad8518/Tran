@@ -10,7 +10,7 @@ import {
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 const EnqDetailsTran = props => {
-  const {navigation, submittedEnqIds} = props;
+  const {navigation, submittedEnqIds,token} = props;
   const id = props?.route?.params?.id;
   const [loading, setLoading] = useState(true);
   const [bidDetails, setBidDetails] = useState('');
@@ -19,7 +19,12 @@ const EnqDetailsTran = props => {
 
   useEffect(() => {
     axios
-      .get(`/enquiry/single?enquiryId=${id}`)
+      .get('/enquiry/get-enquiry',{
+        headers: {
+          Authorization: `Bearer ${token}`, // Send token for authentication
+      },
+      params: { enquiryId:`${id}` }
+      })
       .then(res => {
         const enq = res.data.enquiry;
         const to = res.data.toAddress;

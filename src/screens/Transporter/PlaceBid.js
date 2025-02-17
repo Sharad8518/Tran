@@ -61,7 +61,7 @@ const PlaceBid = props => {
   const [btnLoader, setBtnLoader] = useState(false);
   useEffect(() => {
     axios
-      .get(`/enquiry/single?enquiryId=${id}`)
+      .get(`/enquiry?enquiryId=${id}`)
       .then(res => {
         console.log('res', res);
         const databid = res.data.databid;

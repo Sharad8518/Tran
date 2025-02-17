@@ -42,10 +42,11 @@ const ConsigneeHome = props => {
   }, [props.token]);
   const getEnquiryShort = () => {
     axios
-      .get('/consignee/enquiry/details', {
+      .get('/enquiry/consignee/detail', {
         headers: {Authorization: `Bearer ${props.token}`},
       })
       .then(res => {
+        console.log('res',res)
         setLoading(false);
         if (!!res.data) {
           const enquiries = res.data.enquiries.map((e, i) => {

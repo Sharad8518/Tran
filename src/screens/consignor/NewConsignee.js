@@ -94,7 +94,7 @@ const NewConsignee = props => {
       district: data.location,
     };
     axios
-      .put(`/consignee/${data._id}`, payload, {
+      .put(`/consignee//update/${data._id}`, payload, {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
@@ -118,7 +118,7 @@ const NewConsignee = props => {
     setLoading(true);
     axios
       .post(
-        '/consignee/new',
+        '/consignee/addConsignee',
         {
           ...data,
           adminName: data.managerName,

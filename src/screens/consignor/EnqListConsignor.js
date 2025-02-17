@@ -8,16 +8,22 @@ import ShipmentCardConsignee from '../../Components/ShipmentCardConsignee';
 const EnqListConsignor = props => {
   const {navigation, token} = props;
   const [enqList, setEnq] = useState([]);
+  console.log('enqList',enqList)
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     getEnq();
+    
   }, []);
+
+
+
   const getEnq = () => {
     axios
-      .get('/enquiry', {
+      .get('/enquiry/getEnquiries', {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
+        console.log("enquiry res",res.data)
         if (
           res.data.enquiriesList !== undefined &&
           res.data.enquiriesList.length > 0
@@ -38,6 +44,41 @@ const EnqListConsignor = props => {
         //  console.log('consignor enquiry', error);
       });
   };
+
+
+  // const getEnq2 = async () => {
+  //   try {
+  //     const response = await fetch('https://tran-backend-nodejs-restapi.onrender.com/api/enquiry/getEnquiries', {
+  //       method: 'GET',
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  
+  //     const res = await response.json();
+  //     console.log("enquiry res", res.data.data);
+  
+  //     if (res.data.data !== undefined && res.data.data.length > 0) {
+  //       const enquiries = res.data.data.map((e, i) => ({
+  //         ...e,
+  //         from: res.data.fromEnq[i],
+  //         to: res.data.toEnq[i],
+  //       }));
+  //       setEnq(enquiries);
+  //     }
+      
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching enquiries:', error);
+  //     setLoading(false);
+  //   }
+  // };
+  
+
   const deleteEnq = id => {
     const data = {enquiry_id: id};
     axios

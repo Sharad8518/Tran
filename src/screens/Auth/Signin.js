@@ -19,6 +19,7 @@ import {setCityList} from '../../redux/user/actions';
 
 const Signin = props => {
   const {navigation, setToast} = props;
+  const [logintoken,setLoginToken] =useState('')
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const SignInSchema = Yup.object().shape({
@@ -130,43 +131,55 @@ const Signin = props => {
               password: '',
             }}
             onSubmit={data => {
+              console.log('Submitting data:', data);
               setLoading(true);
               axios
-                .post('/login', {
+                .post('/users/login', {
                   email: data.username.toLowerCase(),
                   password: data.password,
                 })
                 .then(async res => {
+                  console.log('API response:', res.data.accessToken);
                   setLoading(false);
-                  if (!!res.data.access_token) {
-                    await AsyncStorage.setItem('token', res.data.access_token);
+                  if (!!res.data.accessToken) {
+                    setLoginToken(res.data.accessToken)
+                    console.log(res)
+                    // console.log('Token received:', res.data.access_token);
+                    await AsyncStorage.setItem('token', res.data.accessToken);
                     await AsyncStorage.setItem('role', res.data.role);
+                    
                     axios.defaults.headers.common[
                       'Authorization'
-                    ] = `Bearer ${res.data.access_token}`;
+                    ] = `Bearer ${res.data.accessToken}`;
+                    
+                    console.log('Calling app bootstrap');
                     onAppBootstrap();
+            
                     auth()
                       .signInAnonymously()
                       .then(firebaseResp => {
-                        dispatch(
-                          setUserLoggedIn(res.data.access_token, res.data.role),
-                        );
-                      });
+                        console.log('Firebase anonymous sign-in successful');
+                        dispatch(setUserLoggedIn(res.data.accessToken, res.data.role));
+                      })
+                      .catch(err => console.error('Firebase auth error:', err));
                   } else {
-                    setToast({text: res.data.message, styles: 'error'});
-                    if (
-                      res.data.message === 'Verify your account before login!'
-                    ) {
+                    console.error('Login failed:', res.data.message);
+                    setToast({ text: res.data.message, styles: 'error' });
+            
+                    if (res.data.message === 'Verify your account before login!') {
+                      console.log('Resending verification email');
                       resendVerification(data.username.toLowerCase());
                     }
                   }
                 })
                 .catch(err => {
+                  console.error('Login request error:', err);
                   setLoading(false);
-                  // console.log('err', err);
                 });
             }}
           />
+         
+          
 
           <TouchableOpacity
             onPress={() => navigation.navigate('ForgotPassword')}
@@ -180,7 +193,7 @@ const Signin = props => {
                 fontWeight: 'bold',
                 textAlign: 'center',
               }}>
-              Forgot Password?
+              Forgot Password? 
             </Text>
           </TouchableOpacity>
           <TouchableOpacity

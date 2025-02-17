@@ -14,9 +14,13 @@ const NewBooking3 = props => {
   const [selected, setSelected] = useState([]);
   useEffect(() => {
     axios
-      .get(
-        `/transporter/list/${enquiry?.selectedConsignee?.location}/${enquiry?.pickupAddress?.location}`,
-        {headers: {Authorization: `Bearer ${token}`}},
+      .get(`/transporter/list`,{
+        params: {
+          toRoute: enquiry?.selectedConsignee?.location,
+          fromRoute: enquiry?.pickupAddress?.location,
+        },
+        headers: {Authorization: `Bearer ${token}`},
+      }
       )
       .then(res => {
         if (!!res.data) {
@@ -50,7 +54,7 @@ const NewBooking3 = props => {
       selectedTransporters: selected.map(s => s.toString()),
     };
     axios
-      .post('/enquiry', payload, {headers: {Authorization: `Bearer ${token}`}})
+      .post('/enquiry/addEnquiry', payload, {headers: {Authorization: `Bearer ${token}`}})
       .then(res => {
         setBtnLoader(false);
         setToast({text: 'Enquiry created successfully!', styles: 'success'});

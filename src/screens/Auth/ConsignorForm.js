@@ -7,6 +7,7 @@ import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
 import {FormInput} from '../../Components/FormInput';
 import {FullScreenModalSelect} from '../../Components/FullScreenModalSelect';
 import statesJson from '../../../states-districts.json';
+import cityJson from "../../../cities.json"
 import store from '../../redux/store';
 import {Icon} from 'react-native-elements';
 import {ActivityIndicator} from 'react-native';
@@ -21,9 +22,9 @@ const ConsignorForm = props => {
     loading,
   } = props;
   const statesData = statesJson.states;
-  const citiesData = store.getState()?.userReducer?.CityList;
+  const citiesData = cityJson|| store.getState()?.userReducer?.CityList;
 
-  console.log('citiesData',citiesData)
+
 
 
   const [states, setStates] = useState([]);

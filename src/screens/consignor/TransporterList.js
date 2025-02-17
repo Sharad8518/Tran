@@ -34,7 +34,7 @@ const TransporterList = props => {
   }, [searchQuery]);
   useEffect(() => {
     axios
-      .get(`/alltransporter/list`, {
+      .get(`/transporter/all-transporters`, {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
@@ -48,7 +48,7 @@ const TransporterList = props => {
   }, []);
   useEffect(() => {
     axios
-      .get(`/transporterid/list`, {
+      .get(`/transporter/selected-transporter-ids`, {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
@@ -79,7 +79,7 @@ const TransporterList = props => {
       data_list: data,
     };
     axios
-      .post('/alltransporter/list', payload, {
+      .post('/transporter/all-transporters', payload, {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {

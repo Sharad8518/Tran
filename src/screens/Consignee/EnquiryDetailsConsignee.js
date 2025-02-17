@@ -16,7 +16,7 @@ const EnquiryDetailsConsignee = props => {
   const [show, toggleShow] = useState(false);
   useEffect(() => {
     axios
-      .get(`/enquiry/single?enquiryId=${enqId}`)
+      .get(`/enquiry/get-enquiry?enquiryId=${enqId}`)
       .then(res => {
         const enq = res.data.enquiry;
         const to = res.data.toAddress;

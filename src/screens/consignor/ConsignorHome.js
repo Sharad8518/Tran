@@ -36,7 +36,7 @@ const ConsignorHome = props => {
   }, [props.token]);
   const getEnquiryShort = () => {
     axios
-      .get('/enquiry', {headers: {Authorization: `Bearer ${props.token}`}})
+      .get('/enquiry/getEnquiries', {headers: {Authorization: `Bearer ${props.token}`}})
       .then(res => {
         if (!!res.data) {
           const enquiries = res.data.enquiriesList.map((e, i) => {
@@ -72,7 +72,8 @@ const ConsignorHome = props => {
         //  console.log('consignor enquiry', error);
       });
   };
-  const defaultAddress = consignor?.address.find(a => a.isDefault);
+  // const defaultAddress = consignor?.address.find(a => a.isDefault);
+  // console('defaultAddress',defaultAddress)
   return (
     <SafeAreaView edges={['bottom']} style={{flex: 1}}>
       <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>

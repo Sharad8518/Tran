@@ -15,7 +15,7 @@ TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = false;
 TextInput.defaultProps.style = {fontFamily: 'Lato-Regular'};
 Text.defaultProps.style = {fontFamily: 'Lato-Regular'};
-axios.defaults.baseURL = 'https://traninnovation.com/api';
+axios.defaults.baseURL = 'https://tran-backend-nodejs-restapi.onrender.com/api';
 const App = () => {
   const [toast, setAppToast] = React.useState(null);
   const notif = new NotifService(onRegister, onNotif);

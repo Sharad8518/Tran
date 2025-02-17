@@ -14,7 +14,7 @@ const ShipmentListConsignee = props => {
   const [Ship, setShip] = useState([]);
   useEffect(() => {
     axios
-      .get('/consignee/shipment/list', {
+      .get('/shipment/list', {
         headers: {Authorization: `Bearer ${props.token}`},
       })
       .then(res => {

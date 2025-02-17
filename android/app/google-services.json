@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "467235841699",
+    "firebase_url": "https://tran-app-bded3-default-rtdb.firebaseio.com",
     "project_id": "tran-app-bded3",
     "storage_bucket": "tran-app-bded3.firebasestorage.app"
   },

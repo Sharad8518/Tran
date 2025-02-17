@@ -60,17 +60,18 @@ export const getConsignorDetails = () => {
     const store = getState();
     const token = store.authReducer.token;
     axios
-      .get('/consignor/account')
+      .get('consignor/account/details')
       .then(res => {
-        const profile = res.data[0];
+        const profile = res.data.data;
         dispatch({
           type: SET_CONSIGNOR_PROFILE,
           payload: profile,
         });
         axios
-          .get('/consignor/address')
+          .get('/consignor/address/details')
           .then(resp => {
-            const address = resp.data;
+            const address = resp.data.data;
+              console.log('resp address',resp.data.data)
             dispatch({
               type: SET_CONSIGNOR_ADDRESS,
               payload: address,

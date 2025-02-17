@@ -13,7 +13,7 @@ const ViewBids = props => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     axios
-      .get(`/bid/${enqId}`)
+      .get(`/bid/enquiry/${enqId}`)
       .then(res => {
         if (Array.isArray(res.data.Bids)) {
           const bids = res.data.Bids;

@@ -7,6 +7,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AboutCard from '../../Components/AboutCard';

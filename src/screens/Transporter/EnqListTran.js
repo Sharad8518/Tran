@@ -19,7 +19,7 @@ const EnqListTran = props => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     axios
-      .get('/transporter/enquiry/all', {
+      .get('/transporter/transporter-all-enquiry', {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {

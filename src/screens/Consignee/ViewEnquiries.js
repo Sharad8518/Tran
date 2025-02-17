@@ -20,7 +20,7 @@ const ViewEnquiries = props => {
 
   useEffect(() => {
     axios
-      .get('/consignee/enquiry/details', {
+      .get('/consignee/detail', {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
