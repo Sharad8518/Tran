@@ -22,7 +22,7 @@ const ConsignorForm = props => {
     loading,
   } = props;
   const statesData = statesJson.states;
-  const citiesData = cityJson|| store.getState()?.userReducer?.CityList;
+  const citiesData = store.getState()?.userReducer?.CityList;
 
 
 

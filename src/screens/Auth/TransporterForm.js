@@ -150,7 +150,8 @@ export const RouteSelection = props => {
     props;
   return (
     <>
-      {values?.routes.map((route, i) => {
+      {values?.routes?.map((route, i) => {
+        console.log("i",i)
         return (
           <View key={i}>
             <View
@@ -223,7 +224,7 @@ export const RouteSelection = props => {
           </View>
         );
       })}
-      {values?.routes.length < 7 && (
+      {values?.routes?.length < 7 && (
         <TouchableOpacity
           onPress={() => push({from: '', to: ''})}
           style={{

@@ -18,6 +18,11 @@ const ChatList = props => {
     firebaseUId,
     unreadCounts,
   } = props;
+
+  console.log('chats',chats)
+
+  console.log('firebaseUId',firebaseUId)
+
   return (
     <View
       style={{
@@ -56,9 +61,12 @@ const ChatList = props => {
   );
 };
 const ChatCard = props => {
+  console.log('props',props)
   const {details, onPress, firebaseUId, unreadCounts, lastSeen} = props;
   const [lastMessage, setLastMessage] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  console.log("details",details)
   useEffect(() => {
     database()
       .ref(databaseRefs.chats)
@@ -106,7 +114,7 @@ const ChatCard = props => {
       }}>
       <View style={{flex: 9}}>
         <Text style={{textTransform: 'capitalize', fontFamily: 'Lato-Bold'}}>
-          {details.toUser.userName} ({details.toUser.role})
+          {details.toUser?.userName} ({details.toUser?.role})
         </Text>
         {!!lastMessage && (
           <View

@@ -47,9 +47,12 @@ const NewSupervisor = props => {
   const {token, navigation, setToast, route} = props;
   const [loading, setLoading] = useState(false);
   const supervisor = route?.params?.supervisor;
-  const userId = props.consignor.userId;
+  const userId = props.consignor._id;
+
+ 
   const edit = route?.params?.edit ?? false;
   const editSupervisor = data => {
+    console.log('data',data)
     setLoading(true);
     console.log('data', data);
     const payload = {
@@ -83,13 +86,13 @@ const NewSupervisor = props => {
     setLoading(true);
     axios
       .post(
-        '/register',
+        '/users/register',
         {
           ...data,
           adminName: data.managerName,
           state: data.location,
           district: data.location,
-          consignorId: userId.toString(),
+          consignorId: userId,
         },
         {
           headers: {Authorization: `Bearer ${token}`},

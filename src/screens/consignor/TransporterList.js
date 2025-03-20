@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   Pressable,
+  TextInput,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import {ActivityIndicator} from 'react-native-paper';
@@ -15,6 +16,7 @@ import {connect} from 'react-redux';
 import {withAppToaster} from '../../redux/AppState';
 import {Searchbar} from 'react-native-paper';
 import {T} from 'lodash/fp';
+import { color } from 'react-native-elements/dist/helpers';
 const TransporterList = props => {
   const {token, setToast, navigation} = props;
   const [btnLoader, setBtnLoader] = useState(false);
@@ -38,9 +40,10 @@ const TransporterList = props => {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
-        if (!!res.data) {
-          setSortTransporters(res.data);
-          setTransporters(res.data);
+        if (!!res.data.data) {
+          console.log('res.data',res.data)
+          setSortTransporters(res.data.data);
+          setTransporters(res.data.data);
         }
         setLoading(false);
       })
@@ -67,22 +70,44 @@ const TransporterList = props => {
     else selectedData = [...selected, id];
     setSelected(selectedData);
   };
+  
   const submit = async () => {
     setBtnLoader(true);
     const data = [];
     selected.map(
-      s => transporters.map(t => (s === t._id ? data.push(t) : '')),
+      s => transporters.map(t => (s === t._id ? data.push({
+        address:t.address,
+        companyName:t.companyName,
+        userId:t._id,
+        userName:t.userName
+      
+  }) : '')),
       // data.push(transporters.filter(I => I._id === s))
     );
+    // const data = {
+    //   data_list: selected
+    //     .map(s => transporters.find(t => t._id === s))
+    //     .filter(t => t) // Remove undefined values
+    //     .map(t => ({
+    //       userId: t.userId,
+    //       userName: t.userName
+    //     }))
+    // };
+
+    
+
+   
+     console.log('data',data)
 
     const payload = {
       data_list: data,
     };
     axios
-      .post('/transporter/all-transporters', payload, {
+      .post('/transporter/update-transporter-list', payload, {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
+         console.log('res',res)
         setBtnLoader(false);
         setToast({text: 'Updated Successfully', styles: 'success'});
         navigation.goBack();
@@ -104,7 +129,7 @@ const TransporterList = props => {
         justifyContent: 'space-between',
         paddingTop: Platform.OS === 'ios' ? '15%' : '0%',
       }}>
-      <Searchbar
+      {/* <Searchbar
         placeholder="Search Transporter"
         onChangeText={onChangeSearch}
         value={searchQuery}
@@ -112,7 +137,11 @@ const TransporterList = props => {
           marginVertical: 10,
           backgroundColor: '#fff',
         }}
-      />
+      /> */}
+
+      <View style={{width:"100%",height:45,backgroundColor:"#fff",marginTop:10,borderRadius:10,borderColor:"#ddd",borderWidth:1,flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+       <TextInput placeholderTextColor={"#777"} placeholder='Search Transporter' style={{width:"95%",color:"#000"}}  value={searchQuery}  onChangeText={onChangeSearch}/>
+      </View>
 
       {loading ? (
         <ActivityIndicator />

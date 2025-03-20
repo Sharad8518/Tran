@@ -37,6 +37,8 @@ export const chatExists = (toUserChats, userId, shipmentId) => {
 const TransporterListCard = props => {
   const {tData, consignor, firebaseUid, setActiveChat, setToast} = props;
 
+  console.log('tData',)
+
   const navigation = useNavigation();
   const [remarks, setRemark] = useState('');
   const shipmentId = 1;

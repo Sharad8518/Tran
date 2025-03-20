@@ -88,26 +88,27 @@ const ConsigneeRegistration = withAppToaster(props => {
         onSubmit={data => {
           setLoading(true);
           const payload = {
-            consignorId: data.consignorId,
-            companyName: data.companyName,
-            address: data.address,
-            pincode: data.pincode,
-            panNumber: data.pan,
-            gstNumber: data.gst,
-            district: data.district,
-            state: data.state,
-            managerName: data.managerName,
-            adminName: data.adminName,
-            location: data.location,
-            userName: params?.username,
-            contact: params?.contact,
             email: params.email.toLowerCase(),
             password: params.password,
+            consignorId:data.consignorId,
             role: params.role,
+            contact: params?.contact,
+            userName: params?.username,
+            companyName: data.companyName,
+            adminName: data.adminName,
+            address: data.address,
+            pincode: data.pan,
+            location: data.location,
+            gstNumber:data.gst,
+            district:data.district,
+            managerName:data.managerName,
+            state:data.state,
+            panNumber: data.pan
           };
           axios
             .post('/register', payload)
             .then(res => {
+              console.log("data regist",res.data)
               setLoading(false);
               if (!res.data.success) {
                 setToast({

@@ -20,7 +20,7 @@ import {chatExists} from '../consignor/ShipmentDetails';
 import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 
 const ShipmentDetailsConsignee = props => {
-  const shipmentId = 1;
+  const shipmentId = props?.route?.params.shipmentId;
   const shipmentIdRoute = props?.route?.params.shipmentId;
   const {setToast, navigation, firebaseUid, consignee, setActiveChat} = props;
   const [details, setDetails] = useState(null);
@@ -31,16 +31,17 @@ const ShipmentDetailsConsignee = props => {
   const isFocused = useIsFocused();
   useEffect(() => {
     axios
-      .post(`/shipment/details`, {shipmentId: shipmentIdRoute})
+      .get(`/shipment/details/${shipmentIdRoute}`)
       .then(res => {
         const response = res.data;
+        console.log('response',response.transporter.userId.firebaseUID)
         const details = {
-          shipment: response.shipment[0],
-          enquiry: response.enquiry[0],
-          transporter: response.transporter[0],
-          requester: response.requester[0],
-          toAddress: response.toAddress[0],
-          fromAddress: response.fromAddress[0],
+          shipment: response.shipment,
+          enquiry: response.enquiry,
+          transporter: response.transporter,
+          requester: response.requester,
+          toAddress: response.toAddress,
+          fromAddress: response.fromAddress,
         };
         setDetails(details);
         setLoading(false);
@@ -52,8 +53,8 @@ const ShipmentDetailsConsignee = props => {
   }, [shipmentIdRoute, isFocused]);
   useEffect(() => {
     if (!!details) {
-      const transporterId = details?.transporter.firebaseUid;
-      const consignorId = details?.requester.firebaseUid;
+      const transporterId = details?.transporter.userId.firebaseUID;
+      const consignorId = details?.requester.userId.firebaseUID;
       database()
         .ref(databaseRefs.users)
         .child(`${transporterId}`)
@@ -66,7 +67,9 @@ const ShipmentDetailsConsignee = props => {
   }, [details, isFocused]);
   const chatWithConsignor = async () => {
     const toUser = {
-      firebaseUid: details.requester.firebaseUid,
+      firebaseUid: details.requester.userId.firebaseUID,
+      role:details.requester.userId.role,
+      userName: details.requester.userName,
       ..._.omit(consignorChats, ['chats', 'presence']),
     };
     const fromUser = {
@@ -92,16 +95,26 @@ const ShipmentDetailsConsignee = props => {
       });
     } else {
       initiateNewChat(
-        details.requester.firebaseUid,
+        details.requester.userId.firebaseUID,
         toUser,
         firebaseUid,
         fromUser,
       );
     }
   };
+
+  
+  
+  console.log("details",details?.requester?.userId?.firebaseUID)
+  console.log('firebaseUid',consignee.userName)
+  
   const chatWithTransporter = async () => {
     const toUser = {
-      firebaseUid: details.transporter.firebaseUid,
+      firebaseUid: details.transporter.userId.firebaseUID,
+      role:"transpoter",
+      contact: details.transporter.contact,
+      email: details.transporter.email,
+      userName: details.transporter.userName,
       ..._.omit(transporterChats, ['chats', 'presence']),
     };
     const fromUser = {
@@ -129,7 +142,7 @@ const ShipmentDetailsConsignee = props => {
     } else {
       // for new chat between transporter and consignor for given shipment
       initiateNewChat(
-        details.transporter.firebaseUid,
+        details.transporter.userId.firebaseUID,
         toUser,
         firebaseUid,
         fromUser,
@@ -197,6 +210,8 @@ const ShipmentDetailsConsignee = props => {
         });
       });
   };
+
+ 
   return (
     <View style={{flex: 1}}>
       {loading ? (

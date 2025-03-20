@@ -33,9 +33,11 @@ export default (state = initialState, {type, payload}) => {
         consignor: {
           ...state.consignor,
           profile: payload,
+          
         },
+        
         userName: payload.userName,
-        firebaseUid: payload.firebaseUid,
+        firebaseUid: payload.firebaseUID,
       };
     case SET_CONSIGNOR_ADDRESS:
       return {
@@ -63,8 +65,9 @@ export default (state = initialState, {type, payload}) => {
           profile: payload.profile,
           routes: payload.routes,
         },
+      
         userName: payload.profile.userName,
-        firebaseUid: payload.profile.firebaseUid,
+        firebaseUid: payload.profile.userId.firebaseUID,
         loading: false,
       };
     case SET_CONSIGNEE_PROFILE:
@@ -73,7 +76,7 @@ export default (state = initialState, {type, payload}) => {
         consignee: {
           profile: payload,
         },
-        firebaseUid: payload.firebaseUid,
+        firebaseUid: payload.userId.firebaseUID,
         loading: false,
       };
     case SET_CITY_LIST:

@@ -76,7 +76,7 @@ export const Splash = withAppToaster(props => {
     if (!!token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       axios
-        .post(`/user/fcmtoken`, {token: fcmToken})
+        .post(`/users/fcmtoken`, {token: fcmToken})
         .then(async res => {
           await AsyncStorage.setItem('fcmToken', fcmToken);
         })
@@ -85,9 +85,10 @@ export const Splash = withAppToaster(props => {
   };
   const getCites = async () => {
     axios
-      .get(`/city/name`)
+      .get(`supervisor/city/name`)
       .then(async res => {
-        const cityList = res.data ?? [];
+        console.log("res ctiy",res.data.data)
+        const cityList = res.data.data ?? [];
         dispatch(setCityList(cityList));
       })
       .catch(err => {});

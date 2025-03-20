@@ -57,6 +57,7 @@ const HomeTrans = props => {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
+        console.log('res',res.data)
         const dropLocations = res.data.dropLocationInfo;
         const enqInfo = res.data.enqInfo;
         const shortList = enqInfo.map((e, i) => ({
@@ -276,7 +277,7 @@ const HomeTrans = props => {
                             fontSize: 14,
                             fontFamily: 'Lato-Bold',
                           }}>
-                          Delivery Location: {enq.dropLocation.address}
+                          Delivery Location: {enq.dropLocation?.address}
                         </Text>
                         <TouchableOpacity
                           onPress={() => (

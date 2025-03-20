@@ -42,18 +42,23 @@ export const chatExists = (toUserChats, userId, shipmentId) => {
   return {exists: false};
 };
 const BidsDetailsConsignor = props => {
+ console.log('props',props?.route?.params.bidDetails.transporterDetails)
   const transporter = {
-    firebaseUid: props?.route?.params.bidDetails.firebaseUid,
-    address: props?.route?.params.bidDetails.address,
+    firebaseUid: props?.route?.params.bidDetails.userDetails[0].firebaseUID,
+    role: props?.route?.params.bidDetails.userDetails[0].role,
+    address: props?.route?.params.bidDetails.transporterDetails.address,
+    userName:props?.route?.params.bidDetails.transporterDetails.userName,
     companyName: props?.route?.params.bidDetails.companyName,
-    contact: props?.route?.params.bidDetails.contact,
-    email: props?.route?.params.bidDetails.email,
-    location: props?.route?.params.bidDetails.location,
-    gstNumber: props?.route?.params.bidDetails.gstNumber,
-    panNumber: props?.route?.params.bidDetails.panNumber,
-    truckCount: props?.route?.params.bidDetails.truckCount,
-    pincode: props?.route?.params.bidDetails.pincode,
+    contact: props?.route?.params.bidDetails.transporterDetails.contact,
+    email: props?.route?.params.bidDetails.transporterDetails.email,
+    location: props?.route?.params.bidDetails.transporterDetails.location,
+    gstNumber: props?.route?.params.bidDetails.transporterDetails.gstNumber,
+    panNumber: props?.route?.params.bidDetails.transporterDetails.panNumber,
+    truckCount: props?.route?.params.bidDetails.transporterDetails.truckCount,
+    pincode: props?.route?.params.bidDetails.transporterDetails.pincode,
   };
+
+  console.log('transporter',transporter)
 
   const {consignor, firebaseUid, navigation, chats, setActiveChat, setToast} =
     props;
@@ -76,6 +81,10 @@ const BidsDetailsConsignor = props => {
   const chatWithTransporter = async () => {
     const toUser = {
       firebaseUid: transporter.firebaseUid,
+      contact: transporter.contact,
+      email: transporter.email,
+      role: transporter.role,
+      userName: transporter.userName,
       ..._.omit(transporterChats, ['chats', 'presence']),
     };
     const fromUser = {
@@ -197,6 +206,8 @@ const BidsDetailsConsignor = props => {
     axios
       .get(`/bid/details/${bidId}`)
       .then(res => {
+        console.log("bid",res.data)
+        console.log('bidId',bidId)
         setDetails(res.data);
         setLoading(false);
       })
@@ -210,11 +221,12 @@ const BidsDetailsConsignor = props => {
       .then(res => {
         setBtnLoader(false);
         GetBidDetails();
-        if (!res.data.success) {
-          setToast({text: res.data.msg, styles: 'error'});
-        } else {
+        if (res.data.success) {
           navigation.navigate('ShipmentList');
           setToast({text: res.data.msg, styles: 'success'});
+        } else {
+          setToast({text: res.data.msg, styles: 'error'});
+         
         }
       })
       .catch(error => {
@@ -321,7 +333,7 @@ const BidsDetailsConsignor = props => {
                     marginVertical: hp(0.4),
                     marginBottom: hp(1),
                   }}>
-                  {moment(details.enquiry[0].loadingTime).format(
+                  {moment(details.enquiry.loadingTime).format(
                     'Do MMMM YYYY',
                   )}
                 </Text>

@@ -22,6 +22,7 @@ const ShipmentList = props => {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
+        console.log('res',)
         setLoading(false);
         const shipments = res.data.shipment.map((e, i) => {
           return {
@@ -71,7 +72,7 @@ const ShipmentList = props => {
               fontSize: 14,
               fontFamily: 'Lato-Bold',
             }}>
-            Shipment: #{item._id}
+            Shipment: #{item.enquiryUquid}
           </Text>
           <Text
             style={{

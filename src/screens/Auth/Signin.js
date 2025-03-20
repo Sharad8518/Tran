@@ -79,7 +79,7 @@ const Signin = props => {
     if (!!token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       axios
-        .post(`/user/fcmtoken`, {token: fcmToken})
+        .post(`/users/fcmtoken`, {token: fcmToken})
         .then(async res => {
           await AsyncStorage.setItem('fcmToken', fcmToken);
         })
@@ -139,11 +139,11 @@ const Signin = props => {
                   password: data.password,
                 })
                 .then(async res => {
-                  console.log('API response:', res.data.accessToken);
+                  // console.log('API response:', res.data.accessToken);
                   setLoading(false);
                   if (!!res.data.accessToken) {
                     setLoginToken(res.data.accessToken)
-                    console.log(res)
+                    // console.log(res)
                     // console.log('Token received:', res.data.access_token);
                     await AsyncStorage.setItem('token', res.data.accessToken);
                     await AsyncStorage.setItem('role', res.data.role);

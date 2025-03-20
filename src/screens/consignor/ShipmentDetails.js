@@ -34,7 +34,7 @@ export const chatExists = (toUserChats, userId, shipmentId) => {
   return {exists: false};
 };
 const ShipmentDetails = props => {
-  const shipmentId = 1;
+  const shipmentId = props?.route?.params.shipmentId;
   const shipmentIdRoute = props?.route?.params.shipmentId;
   const {consignor, firebaseUid, navigation, chats, setActiveChat} = props;
   const [details, setDetails] = useState(null);
@@ -43,36 +43,38 @@ const ShipmentDetails = props => {
   const [transporterChats, setTransporterChats] = useState(null); // includes details of transporter saved in firebase database
   const [consigneeChats, setConsigneeChats] = useState(null); // includes details of transporter saved in firebase database
   const isFocused = useIsFocused();
+
+  console.log('firebaseUid',firebaseUid)
   useEffect(() => {
     axios
-      .post(`/shipment/details`, {
-        shipmentId: shipmentIdRoute,
-      })
+      .get(`/shipment/details/${shipmentIdRoute}`)
       .then(res => {
+        console.log("res",res.data)
         const response = res.data;
         axios
-          .get(`/bid/details/${response.shipment[0].bidId}`)
+          .get(`/bid/details/${response.shipment.bidId}`)
           .then(resp => {
+            console.log('resp',resp.data.bid)
             const details = {
-              shipment: response.shipment[0],
-              enquiry: response.enquiry[0],
-              transporter: response.transporter[0],
-              requester: response.requester[0],
-              toAddress: response.toAddress[0],
-              fromAddress: response.fromAddress[0],
-              bid: resp.data.bid,
+              shipment: response.shipment,
+              enquiry: response.enquiry,
+              transporter: response.transporter,
+              requester: response.requester,
+              toAddress: response.toAddress,
+              fromAddress: response.fromAddress,
+              bid:resp.data.bid,
             };
             setDetails(details);
             setLoading(false);
           })
           .catch(error => {
             const details = {
-              shipment: response.shipment[0],
-              enquiry: response.enquiry[0],
-              transporter: response.transporter[0],
-              requester: response.requester[0],
-              toAddress: response.toAddress[0],
-              fromAddress: response.fromAddress[0],
+              shipment: response.shipment,
+              enquiry: response.enquiry,
+              transporter: response.transporter,
+              requester: response.requester,
+              toAddress: response.toAddress,
+              fromAddress: response.fromAddress,
             };
             setDetails(details);
             setLoading(false);
@@ -85,8 +87,8 @@ const ShipmentDetails = props => {
   }, [shipmentIdRoute, isFocused]);
   useEffect(() => {
     if (!!details) {
-      const transporterId = details?.transporter.firebaseUid;
-      const consigneeId = details?.toAddress.firebaseUid;
+      const transporterId = details?.transporter.userId.firebaseUID;
+      const consigneeId = details?.toAddress.userId.firebaseUID;
       database()
         .ref(databaseRefs.users)
         .child(`${transporterId}`)
@@ -97,9 +99,17 @@ const ShipmentDetails = props => {
         .once('value', snap => setConsigneeChats(snap.val()));
     }
   }, [details]);
+   
+
+  console.log('details',details)
+
   const chatWithTransporter = async () => {
     const toUser = {
-      firebaseUid: details.transporter.firebaseUid,
+      firebaseUid: details.transporter.userId.firebaseUID,
+      userName: details.transporter.userName || "Unknown Transporter",
+      role:details.transporter.userName,
+      contact: details.transporter.contact ,
+      email: details.transporter.email,
       ..._.omit(transporterChats, ['chats', 'presence']),
     };
     const fromUser = {
@@ -111,10 +121,12 @@ const ShipmentDetails = props => {
     };
     // check anyone of consignor chatId matches with transporters chatId
     const isChatInitiated = await chatExists(
-      transporterChats.chats,
+      transporterChats?.chats,
       firebaseUid,
       shipmentId,
     );
+
+    
     if (isChatInitiated.exists) {
       setActiveChat(isChatInitiated.key);
       navigation.navigate('ChatScreen', {
@@ -127,7 +139,7 @@ const ShipmentDetails = props => {
     } else {
       // for new chat between transporter and consignor for given shipment
       initiateNewChat(
-        details.transporter.firebaseUid,
+        details.transporter.userId.firebaseUID,
         toUser,
         firebaseUid,
         fromUser,
@@ -143,14 +155,19 @@ const ShipmentDetails = props => {
       userName: consignor.profile.userName,
     };
     const toUser = {
-      firebaseUid: details.toAddress.firebaseUid,
+      firebaseUid: details.toAddress.userId.firebaseUID,
+      userName:  details.toAddress.userName || "Unknown Transporter",
+      role: details.toAddress.userId.role,
+      contact: details.toAddress.contact ,
+      email: details.toAddress.email,
       ..._.omit(consigneeChats, ['chats', 'presence']),
     };
     const isChatInitiated = await chatExists(
-      consigneeChats.chats,
+      consigneeChats?.chats,
       firebaseUid,
       shipmentId,
     );
+
     if (isChatInitiated.exists) {
       setActiveChat(isChatInitiated.key);
       navigation.navigate('ChatScreen', {
@@ -162,7 +179,7 @@ const ShipmentDetails = props => {
       });
     } else {
       initiateNewChat(
-        details.toAddress.firebaseUid,
+        details.toAddress.userId.firebaseUID,
         toUser,
         firebaseUid,
         fromUser,
@@ -235,6 +252,8 @@ const ShipmentDetails = props => {
         });
       });
   };
+
+  console.log('details',details)
   return (
     <View style={{flex: 1}}>
       {loading ? (
@@ -330,7 +349,7 @@ const ShipmentDetails = props => {
               </View>
               <DetailsRow
                 label="Pick From"
-                value={`${details?.fromAddress.address}, ${details?.fromAddress.district}, ${details?.fromAddress.state}`}
+                value={`${details?.fromAddress?.address}, ${details?.fromAddress?.district}, ${details?.fromAddress?.state}`}
               />
               <DetailsRow
                 label="Deliver To"
@@ -446,7 +465,7 @@ const ShipmentDetails = props => {
               lastUpdate={details?.shipment?.timestamp}
               currentStatus={details?.shipment?.tracking_status}
               to={details?.toAddress.district}
-              from={details?.fromAddress.district}
+              from={details?.fromAddress?.district}
               isDelivered={
                 !!details?.delivered ||
                 details?.shipment?.tracking_status === 'delivered'

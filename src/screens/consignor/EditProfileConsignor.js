@@ -61,11 +61,11 @@ const EditProfileConsignor = props => {
               contactNumber: consignor.contact.toString(),
               panNo: consignor.panNumber,
               GSTno: consignor.gstNumber,
-              address: address[0].address,
-              location: address[0].location,
-              district: address[0].district,
-              state: address[0].state,
-              pincode: address[0].pincode,
+              address: address[0]?.address,
+              location: address[0]?.location,
+              district: address[0]?.district,
+              state: address[0]?.state,
+              pincode: address[0]?.pincode,
             }}
             onSubmit={data => {
               setLoading(true);
@@ -85,11 +85,11 @@ const EditProfileConsignor = props => {
                 .then(res => {
                   setLoading(false);
                   if (res.data.success) {
-                    setToast({text: res.data.msg, styles: 'success'});
+                    setToast({text: res.data.message, styles: 'success'});
                     dispatch(getConsignorDetails());
                     navigation.navigate('ConsignorHome');
                   } else {
-                    setToast({text: res.data.msg, styles: 'error'});
+                    setToast({text: res.data.message, styles: 'error'});
                   }
                 })
                 .catch(error => {

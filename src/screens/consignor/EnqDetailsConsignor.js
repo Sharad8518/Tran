@@ -17,7 +17,7 @@ const EnqDetailsConsignor = props => {
   const [show, toggleShow] = useState(false);
   useEffect(() => {
     axios
-      .get(`/enquiry/single?enquiryId=${item._id}`)
+      .get(`enquiry/get-enquiry/${item._id}`)
       .then(res => {
         const enq = res.data.enquiry;
         const to = res.data.toAddress;
@@ -30,6 +30,8 @@ const EnqDetailsConsignor = props => {
         // console.log('error', error);
       });
   }, []);
+
+  
   return (
     <SafeAreaView style={{flex: 1}} edges={['bottom']}>
       <ScrollView
@@ -93,7 +95,7 @@ const EnqDetailsConsignor = props => {
                     fontSize: 20,
                     marginTop: hp(0.4),
                   }}>
-                  #{details.enq._id}
+                  #{details.enq.enquiryUquid} 
                 </Text>
                 <View
                   style={{
@@ -127,7 +129,7 @@ const EnqDetailsConsignor = props => {
               <DetailsRow
                 labelColor={'#111'}
                 value={`${details.from.address}, ${details.from.location}, ${details.from.district},  ${details.from.state}`}
-                label="Pick up From"
+                label="Pick up From "
               />
               <DetailsRow
                 labelColor={'#111'}

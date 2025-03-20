@@ -16,11 +16,12 @@ const EnquiryDetailsConsignee = props => {
   const [show, toggleShow] = useState(false);
   useEffect(() => {
     axios
-      .get(`/enquiry/get-enquiry?enquiryId=${enqId}`)
+      .get(`/enquiry/get-enquiry/${enqId}`)
       .then(res => {
-        const enq = res.data.enquiry;
-        const to = res.data.toAddress;
-        const from = res.data.fromAddress;
+        console.log('res',res.data)
+        const enq = res.data?.enquiry;
+        const to = res.data?.toAddress;
+        const from = res.data?.fromAddress;
         setDetails({enq, to, from});
         setLoading(false);
       })
@@ -70,7 +71,7 @@ const EnquiryDetailsConsignee = props => {
                   marginTop: hp(2),
                 }}>
                 From
-                {details.from.companyName}
+                {details?.from?.companyName}
               </Text>
               <Text
                 style={{
@@ -88,7 +89,7 @@ const EnquiryDetailsConsignee = props => {
                   fontSize: 20,
                   marginTop: hp(0.4),
                 }}>
-                #{enqId}
+                #{details.enq.enquiryUquid}
               </Text>
               <View
                 style={{
@@ -114,17 +115,17 @@ const EnquiryDetailsConsignee = props => {
                   marginVertical: hp(0.4),
                   marginBottom: hp(1),
                 }}>
-                {moment(details.enq.loadingTime).format('Do MMMM YYYY HH:mm A')}
+                {moment(details?.enq.loadingTime).format('Do MMMM YYYY HH:mm A')}
               </Text>
             </View>
             <DetailsRow
               labelColor={'#111'}
-              value={`${details.from.address}, ${details.from.location}, ${details.from.district},  ${details.from.state}`}
+              value={`${details?.from?.address}, ${details?.from?.location}, ${details?.from?.district},  ${details?.from?.state}`}
               label="Pick up From"
             />
             <DetailsRow
               labelColor={'#111'}
-              value={`${details.to.address}, ${details.to.location}`}
+              value={`${details?.to?.address}, ${details?.to?.location}`}
               label="Delivery to"
             />
             {!show && (

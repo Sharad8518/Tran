@@ -19,11 +19,10 @@ const EnqDetailsTran = props => {
 
   useEffect(() => {
     axios
-      .get('/enquiry/get-enquiry',{
+      .get(`enquiry/get-enquiry/${id}`,{
         headers: {
           Authorization: `Bearer ${token}`, // Send token for authentication
       },
-      params: { enquiryId:`${id}` }
       })
       .then(res => {
         const enq = res.data.enquiry;
@@ -100,7 +99,7 @@ const EnqDetailsTran = props => {
                     right: 10,
                   }}>
                   {bidDetails.bid_rank !== undefined
-                    ? 'L' + bidDetails.bid_rank.sn
+                    ? 'L' + bidDetails.bid_rank.rank
                     : ''}
                 </Text>
                 <Text

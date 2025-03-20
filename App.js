@@ -40,11 +40,13 @@ const App = () => {
   };
   const theme = {
     ...DefaultTheme,
-    roundness: 2,
     colors: {
-      // ...DefaultTheme.colors,
-      primary: '#FFF',
-      accent: '#FFF',
+      ...DefaultTheme.colors,
+      primary: '#6200ee',
+      accent: '#03dac4',
+      background: '#ffffff',
+      surface: '#ffffff',
+      text: '#000000',
     },
   };
   return (

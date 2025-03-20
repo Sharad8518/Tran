@@ -12,19 +12,18 @@ const NewBooking3 = props => {
   const [loading, setLoading] = useState(true);
   const [transporters, setTransporters] = useState([]);
   const [selected, setSelected] = useState([]);
+  console.log('selectedConsignee', enquiry.selectedConsignee._id)
+  console.log('pickupAddress', enquiry.pickupAddress._id)
   useEffect(() => {
     axios
-      .get(`/transporter/list`,{
-        params: {
-          toRoute: enquiry?.selectedConsignee?.location,
-          fromRoute: enquiry?.pickupAddress?.location,
-        },
+        .get(`/transporter/list?toRoute=${enquiry?.selectedConsignee?.location}&fromRoute=${enquiry?.pickupAddress?.location}`,{
         headers: {Authorization: `Bearer ${token}`},
       }
       )
       .then(res => {
+        console.log('list',res.data)
         if (!!res.data) {
-          const list = res.data.map(t => t[0]);
+          const list = res.data;
           setTransporters(list);
         }
         setLoading(false);
@@ -40,22 +39,23 @@ const NewBooking3 = props => {
   const submit = () => {
     setBtnLoader(true);
     const payload = {
-      toConsigneeId: enquiry.selectedConsignee._id,
-      pickupAddresssId: enquiry.pickupAddress._id,
-      weight: enquiry.weight,
-      truckType: enquiry.truckType,
-      material: enquiry.material,
-      unloadingExpense: enquiry.unloadingExpense,
-      loadingExpense: enquiry.loadingExpense,
-      loadingTime: enquiry.loadingTime,
-      advance: enquiry.advance === '' ? null : enquiry.advance,
-      againstBill: enquiry.againstbill === '' ? null : enquiry.againstbill,
-      remarks: enquiry.remarks,
-      selectedTransporters: selected.map(s => s.toString()),
+      "toConsigneeId": `${enquiry.selectedConsignee._id}`,
+      "pickupAddressId": `${enquiry.pickupAddress._id}`,
+      "weight": `${enquiry.weight}`,
+      "truckType": `${enquiry.truckType}`,
+      "material": `${enquiry.material}`,
+      "unloadingExpense": `${enquiry.unloadingExpense}`,
+      "loadingExpense": `${enquiry.loadingExpense}`,
+      "loadingTime": `${enquiry.loadingTime}`,
+      "advance": `${enquiry.advance}`,
+      "againstBill": `${enquiry.againstbill}`,
+      "remarks": `${enquiry.remarks}`,
+      "selectedTransporters": selected
     };
     axios
       .post('/enquiry/addEnquiry', payload, {headers: {Authorization: `Bearer ${token}`}})
       .then(res => {
+        console.log('res add enqury',res)
         setBtnLoader(false);
         setToast({text: 'Enquiry created successfully!', styles: 'success'});
         navigation.navigate('EnqListConsignor');

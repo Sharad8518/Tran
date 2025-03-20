@@ -87,34 +87,37 @@ const DeliverShipmentSchema = Yup.object().shape({
 const ShipmentDetailsTrans = props => {
   const {setToast, navigation, firebaseUid, transporter, setActiveChat, token} =
     props;
+
+    console.log('firebaseUid',firebaseUid)
   const shipmentIdRoute = props?.route?.params.shipmentId;
-  const shipmentId = 1;
+  const shipmentId = props?.route?.params.shipmentId;
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [show, toggleShow] = useState(false);
   const [updateStatus, setUpdateStatus] = useState(false);
+  const [respos,setRepsot] =useState()
   const [deliverShip, setDeliver] = useState(false);
   const [consignorChats, setConsignorChats] = useState(null); // includes details of transporter saved in firebase database
   const [consigneeChats, setConsigneeChats] = useState(null); // includes details of transporter saved in firebase database
   const isFocused = useIsFocused();
   useEffect(() => {
     axios
-      .post(
-        `/shipment/details`,
-        {shipmentId: shipmentIdRoute},
+      .get(
+        `/shipment/details/${shipmentIdRoute}`,
         {
           headers: {Authorization: `Bearer ${token}`},
         },
       )
       .then(res => {
+      setRepsot(res)
         const response = res.data;
         const res_details = {
-          shipment: response.shipment[0],
-          enquiry: response.enquiry[0],
-          transporter: response.transporter[0],
-          requester: response.requester[0],
-          toAddress: response.toAddress[0],
-          fromAddress: response.fromAddress[0],
+          shipment: response.shipment,
+          enquiry: response.enquiry,
+          transporter: response.transporter,
+          requester: response.requester,
+          toAddress: response.toAddress,
+          fromAddress: response.fromAddress,
         };
         setDetails(res_details);
         setLoading(false);
@@ -125,8 +128,8 @@ const ShipmentDetailsTrans = props => {
   }, [isFocused, token]);
   useEffect(() => {
     if (!!details) {
-      const consignorId = details?.requester.firebaseUid;
-      const consigneeId = details?.toAddress.firebaseUid;
+      const consignorId = details?.requester.userId.firebaseUID;
+      const consigneeId = details?.toAddress.userId.firebaseUID;
       database()
         .ref(databaseRefs.users)
         .child(`${consignorId}`)
@@ -158,7 +161,11 @@ const ShipmentDetailsTrans = props => {
   };
   const chatWithConsignor = async () => {
     const toUser = {
-      firebaseUid: details.requester.firebaseUid,
+      firebaseUid: details.requester.userId.firebaseUID,
+      contact: details.requester.userId.contact,
+      email: details.requester.userId.email,
+      role: details.requester.userId.role,
+      userName: details.requester.userName,
       ..._.omit(consignorChats, ['chats', 'presence']),
     };
     const fromUser = {
@@ -200,7 +207,11 @@ const ShipmentDetailsTrans = props => {
       userName: transporter.userName,
     };
     const toUser = {
-      firebaseUid: details.toAddress.firebaseUid,
+      firebaseUid: details.toAddress.userId.firebaseUID,
+      contact: details.toAddress.contact,
+      email: details.toAddress.email,
+      role: details.toAddress.userId.role,
+      userName: details.toAddress.userName,
       ..._.omit(consigneeChats, ['chats', 'presence']),
     };
     const isChatInitiated = await chatExists(
@@ -290,6 +301,7 @@ const ShipmentDetailsTrans = props => {
       {loading ? (
         <View style={{flex: 1, justifyContent: 'center'}}>
           <ActivityIndicator />
+          
         </View>
       ) : !!details ? (
         <ScrollView
@@ -302,6 +314,7 @@ const ShipmentDetailsTrans = props => {
             />
           </View>
           <View style={{backgroundColor: '#fff'}}>
+            
             <View
               style={{
                 marginHorizontal: wp(5),
@@ -641,7 +654,10 @@ const ShipmentDetailsTrans = props => {
           </View>
         </ScrollView>
       ) : (
-        <Text>Details not found</Text>
+        <Text>Details not found
+        {respos}
+         
+        </Text>
       )}
     </View>
   );

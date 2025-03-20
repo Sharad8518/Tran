@@ -15,10 +15,11 @@ const ShipmentListConsignee = props => {
   useEffect(() => {
     axios
       .get('/shipment/list', {
-        headers: {Authorization: `Bearer ${props.token}`},
+        headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
-        setShip(res.data);
+        console.log("list ship",res.data)
+        setShip(res.data.shipments);
         setLoading(false);
       })
       .catch(error => {

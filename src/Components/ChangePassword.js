@@ -22,7 +22,7 @@ import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
 import {ActivityIndicator} from 'react-native-paper';
 import {connect, useDispatch} from 'react-redux';
 const ChangePassword = props => {
-  const {navigation, setToast, role, transporter, consignor, consignee} = props;
+  const {navigation, setToast, role, transporter, consignor, consignee,token} = props;
   const SignInSchema = Yup.object().shape({
     oldPassword: Yup.string('').required('Enter old password'),
     password: Yup.string('').required('Password is required'),
@@ -70,10 +70,11 @@ const ChangePassword = props => {
               const newPassword = data.newPassword;
               const oldPassword = data.oldPassword;
               axios
-                .put('/set/new/password', {oldPassword, newPassword})
+                .put('users/set/new/password', {oldPassword, newPassword}
+                )
                 .then(async res => {
                   setLoading(false);
-                  setToast({text: res.data.msg, styles: 'success'});
+                  setToast({text: res.data.message, styles: 'success'});
                   role === 'transporter'
                     ? navigation.navigate('HomeTrans')
                     : role === 'consignee'

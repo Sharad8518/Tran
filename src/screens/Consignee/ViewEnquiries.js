@@ -20,7 +20,7 @@ const ViewEnquiries = props => {
 
   useEffect(() => {
     axios
-      .get('/consignee/detail', {
+      .get('/enquiry/consignee/detail', {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
@@ -71,7 +71,7 @@ const ViewEnquiries = props => {
               fontSize: 14,
               fontFamily: 'Lato-Bold',
             }}>
-            Enquiry: #{item.enq._id}
+            Enquiry: #{item.enq.enquiryUquid}
           </Text>
           <Text
             style={{

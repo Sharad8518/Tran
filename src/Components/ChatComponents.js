@@ -13,7 +13,7 @@ import {
   View,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
-import {Actions, Bubble, Composer} from 'react-native-gifted-chat';
+// import {Actions, Bubble, Composer} from 'react-native-gifted-chat';
 import {ActivityIndicator} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Share from 'react-native-share';
@@ -32,7 +32,7 @@ export const renderBubble = (props, openImage) => {
     );
   }
 
-  return <Bubble {...props} />;
+  // return <Bubble {...props} />;
 };
 
 export const renderChatEmpty = isAdmin => {
@@ -52,47 +52,47 @@ export const renderChatEmpty = isAdmin => {
     </View>
   );
 };
-export const renderActions = (props, sendImage) => (
-  <Actions
-    {...props}
-    containerStyle={{
-      width: 44,
-      height: 44,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginLeft: 4,
-      marginRight: 4,
-      marginBottom: 0,
-    }}
-    icon={() => <Icon color={'#549CFF'} name="attachment" type="entypo" />}
-    options={{
-      'Send Image From Gallery': () => {
-        return sendImage('gallery');
-      },
-      'Capture Image': () => {
-        return sendImage('camera');
-      },
-      Cancel: () => {
-        // console.log('Cancel');
-      },
-    }}
-    optionTintColor="#222B45"
-  />
-);
-export const renderComposer = props => (
-  <Composer
-    {...props}
-    textInputStyle={{
-      color: '#222B45',
-      borderWidth: 0,
-      borderRadius: 5,
-      borderColor: '#E4E9F2',
-      paddingHorizontal: 12,
-      marginLeft: 0,
-      fontFamily: 'Lato-Regular',
-    }}
-  />
-);
+// export const renderActions = (props, sendImage) => (
+//   <Actions
+//     {...props}
+//     containerStyle={{
+//       width: 44,
+//       height: 44,
+//       alignItems: 'center',
+//       justifyContent: 'center',
+//       marginLeft: 4,
+//       marginRight: 4,
+//       marginBottom: 0,
+//     }}
+//     icon={() => <Icon color={'#549CFF'} name="attachment" type="entypo" />}
+//     options={{
+//       'Send Image From Gallery': () => {
+//         return sendImage('gallery');
+//       },
+//       'Capture Image': () => {
+//         return sendImage('camera');
+//       },
+//       Cancel: () => {
+//         // console.log('Cancel');
+//       },
+//     }}
+//     optionTintColor="#222B45"
+//   />
+// );
+// export const renderComposer = props => (
+//   <Composer
+//     {...props}
+//     textInputStyle={{
+//       color: '#222B45',
+//       borderWidth: 0,
+//       borderRadius: 5,
+//       borderColor: '#E4E9F2',
+//       paddingHorizontal: 12,
+//       marginLeft: 0,
+//       fontFamily: 'Lato-Regular',
+//     }}
+//   />
+// );
 export const ImagePreviewModal = ({visible, close, uploading, send, image}) => {
   return (
     <Modal

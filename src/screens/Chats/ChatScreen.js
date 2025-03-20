@@ -1,45 +1,23 @@
 import database from '@react-native-firebase/database';
-import React, {useCallback, useEffect, useState} from 'react';
-import {View} from 'react-native';
-import {GiftedChat} from 'react-native-gifted-chat';
-import {ActivityIndicator} from 'react-native-paper';
-import {connect} from 'react-redux';
-import {
-  ImageModal,
-  ImagePreviewModal,
-  renderActions,
-  renderBubble,
-  renderChatEmpty,
-  renderComposer,
-} from '../../Components/ChatComponents';
-import {databaseRefs} from '../../config/variables';
-import {withAppToaster} from '../../redux/AppState';
-import {
-  appendMessage,
-  exitChat,
-  setActiveChatId,
-} from '../../redux/chat/actions';
+import React, { useEffect, useState } from 'react';
+import { View, TextInput, FlatList, Text, TouchableOpacity, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
-import {getRandomId} from '../../utils/getRandomId';
-import axios from 'axios';
+import { getRandomId } from '../../utils/getRandomId';
+import { databaseRefs } from '../../config/variables';
 
-const getFileName = image => {
-  return image.path.split('/').reverse()[0];
-};
-const ChatScreen = props => {
-  const {
-    route,
-    messages,
-    firebaseUId,
-    isChatLoading,
-    userName,
-    role,
-    navigation,
-    exitChat,
-    setToast,
-  } = props;
+const ChatScreen = (props) => {
+  const { route, firebaseUId, userName,navigation, role } = props;
+
+  console.log('userName',userName)
+
+
   const details = route?.params?.details;
+  const [messages, setMessages] = useState([]);
+  const [messageText, setMessageText] = useState('');
+  const [uploading, setUploading] = useState(false);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
       // exitChat()
@@ -51,184 +29,113 @@ const ChatScreen = props => {
     });
     return () => unsubscribe();
   }, []);
-  const createMessage = (message, type, imagePath) => {
+
+  useEffect(() => {
+    const chatRef = database().ref(`${databaseRefs.messages}/${details?.key}`);
+    chatRef.on('child_added', (snapshot) => {
+      setMessages((prevMessages) => [snapshot.val(), ...prevMessages]);
+    });
+    return () => chatRef.off();
+  }, []);
+
+  const sendMessage = async () => {
+    if (!messageText.trim()) return;
     const newMessage = {
-      _id: type === 'text' ? message._id : getRandomId(),
-      text: type === 'text' ? message.text : null,
-      url: type === 'text' ? null : message,
-      imagePath: type === 'text' ? null : imagePath,
-      type,
-      user: {
-        name: userName,
-        _id: firebaseUId,
-        role,
-      },
+      _id: getRandomId(),
+      text: messageText,
+      type: 'text',
+      user: { name: userName, _id: firebaseUId, role },
       timestamp: new Date().getTime(),
     };
-    return newMessage;
+    database().ref(`${databaseRefs.messages}/${details.key}`).push().set(newMessage);
+    setMessageText('');
   };
-  const SendNotification = async data => {
-    axios
-      .post(`/user/pushnotification`, {
-        sendMessage: data.sendMessage,
-        firebase_id: data.firebase_id,
-        sender_name: data.sender_name,
-      })
-      .then(async res => {
-        // console.log('res', res);
-      })
-      .catch(err => {
-        // console.log('err', err.response);
-      });
-  };
-  const onSend = useCallback((messages = []) => {
-    const path = `${databaseRefs.messages}/${details.key}`;
-    const newMessage = createMessage(messages[0], 'text');
-    const data = {
-      sendMessage: newMessage.text,
-      firebase_id: details.toUser.firebaseUid,
-      sender_name: newMessage.user.name,
-    };
-    SendNotification(data);
-    database().ref(path).push().set(newMessage);
-    database()
-      .ref(databaseRefs.chats)
-      .child(details.key)
-      .update({lastMessage: newMessage});
-  }, []);
-  //for uploading image
-  const [uploading, setUploading] = useState(false);
-  const [imgPreview, setPreview] = useState(false);
-  const [image, setImage] = useState();
-  //for uploading image
 
-  const openCamera = () => {
-    ImagePicker.openCamera({
-      width: 300,
-      height: 400,
-      cropping: false,
-    }).then(handleImage);
+  const pickImage = () => {
+    ImagePicker.openPicker({ cropping: true, mediaType: 'photo' }).then(handleImage);
   };
-  const openGallery = () => {
-    ImagePicker.openPicker({
-      width: 300,
-      height: 400,
-      cropping: false,
-      mediaType: 'photo',
-    }).then(handleImage);
-  };
-  const handleImage = image => {
-    // if (image.size > 1) {
-    // setToast({ text: `Image size must be less than ${1}MB`, styles: 'error' });
-    // } else {
-    setImage(image);
-    setPreview(true);
-    // }
-  };
-  const sendImage = () => {
+
+  const handleImage = (image) => {
     setUploading(true);
-    let fileName = getFileName(image);
-    uploadImage(image, fileName);
+    const fileName = image.path.split('/').pop();
+    const ref = storage().ref(`chatImages/${fileName}`);
+    ref.putFile(image.path).then(async () => {
+      const url = await ref.getDownloadURL();
+      sendImageMessage(url, fileName);
+      setUploading(false);
+    }).catch(() => setUploading(false));
   };
 
-  // for displaying image
-  const [imageModal, showImageModal] = useState(false);
-  const [imageMessage, setImageMessage] = useState();
-  // for displaying image
-
-  const openImage = data => {
-    showImageModal(true);
-    setImageMessage(data);
-  };
-  const uploadImage = (image, fileName) => {
-    let ref = storage().ref(`chatImages/${fileName}`);
-    let task = ref.putFile(image.path);
-    task
-      .then(async res => {
-        const url = await ref.getDownloadURL();
-        createImageMessage(`chatImages/${fileName}`, url);
-        setUploading(false);
-        setPreview(false);
-        setToast({text: `Image uploaded successfully`, styles: 'success'});
-      })
-      .catch(e => {
-        setUploading(false);
-        // console.log('uploading image error => ', e);
-        setToast({text: `Something went wrong`, styles: 'error'});
-      });
-  };
-  const createImageMessage = (path, url) => {
-    const dbpath = `${databaseRefs.messages}/${details.key}`;
-    const newMessage = createMessage(url, 'image', path);
-    const data = {
-      sendMessage: 'Photo',
-      firebase_id: details.toUser.firebaseUid,
-      sender_name: newMessage.user.name,
+  const sendImageMessage = (url, path) => {
+    const newMessage = {
+      _id: getRandomId(),
+      text: null,
+      url,
+      type: 'image',
+      user: { name: userName, _id: firebaseUId, role },
+      timestamp: new Date().getTime(),
     };
-    SendNotification(data);
-    database().ref(dbpath).push().set(newMessage);
-    setUploading(false);
-    database()
-      .ref(databaseRefs.chats)
-      .child(details.key)
-      .update({lastMessage: newMessage});
+    database().ref(`${databaseRefs.messages}/${details.key}`).push().set(newMessage);
   };
+
+  console.log('message',messages)
+  console.log('firebaseUId',firebaseUId)
+  
+
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
-      {isChatLoading ? (
-        <View style={{flex: 1}}>
-          <ActivityIndicator color="#549CFF" />
-        </View>
-      ) : (
-        <GiftedChat
-          renderBubble={props => renderBubble(props, openImage)}
-          renderActions={props =>
-            renderActions(props, type => {
-              type === 'camera' ? openCamera() : openGallery();
-            })
-          }
-          renderChatEmpty={renderChatEmpty}
-          messages={messages}
-          renderComposer={renderComposer}
-          onSend={messages => onSend(messages)}
-          dateFormat="DD MMM YYYY"
-          user={{
-            _id: firebaseUId,
-          }}
+    <View style={styles.container}>
+      <FlatList
+        data={messages}
+        keyExtractor={(item) => item._id}
+        inverted
+        renderItem={({ item }) => (
+          <View style={[styles.message, item.user._id === firebaseUId ? styles.myMessage : styles.otherMessage]}>
+            {item.type === 'text' ? (
+              <Text style={styles.messageText}>{item.text}</Text>
+            ) : (
+              <Image source={{ uri: item.url }} style={styles.image} />
+            )}
+          </View>
+        )}
+      />
+      {uploading && <ActivityIndicator size="small" color="#000" />}
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          value={messageText}
+          onChangeText={setMessageText}
+          placeholder="Type a message"
         />
-      )}
-      <ImageModal
-        setToast={setToast}
-        imageMessage={imageMessage}
-        visible={imageModal}
-        close={() => showImageModal(false)}
-      />
-      <ImagePreviewModal
-        send={() => sendImage()}
-        image={image}
-        uploading={uploading}
-        close={() => {
-          setPreview(false);
-          setImage(null);
-        }}
-        visible={imgPreview}
-      />
+        <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+          <Text style={styles.sendText}>Send</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={pickImage} style={styles.imageButton}>
+          <Text style={styles.imageText}>📷</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
-const mapStateToProps = store => ({
-  isChatLoading: store.chatsReducer.isChatLoading,
-  messages: store.chatsReducer.messages,
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  message: { padding: 10, borderRadius: 10, margin: 5, maxWidth: '70%' },
+  myMessage: { backgroundColor: '#DCF8C6', alignSelf: 'flex-end' },
+  otherMessage: { backgroundColor: '#ECECEC', alignSelf: 'flex-start' },
+  messageText: { fontSize: 16 },
+  image: { width: 150, height: 150, borderRadius: 10 },
+  inputContainer: { flexDirection: 'row', padding: 10, borderTopWidth: 1, borderColor: '#ccc' },
+  input: { flex: 1, height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 20, paddingHorizontal: 10 },
+  sendButton: { marginLeft: 10, padding: 10, backgroundColor: '#007AFF', borderRadius: 20 },
+  sendText: { color: '#fff', fontSize: 16 },
+  imageButton: { marginLeft: 10, padding: 10, backgroundColor: '#FF4081', borderRadius: 20 },
+  imageText: { color: '#fff', fontSize: 18 },
+});
+
+const mapStateToProps = (store) => ({
   firebaseUId: store.userReducer.firebaseUid,
-  activeChatId: store.chatsReducer.activeChatId,
   userName: store.userReducer.userName,
   role: store.authReducer.role,
 });
-const mapDispatchToProps = dispatch => ({
-  fetchChat: chatId => dispatch(setActiveChatId(chatId)),
-  appendMessage: message => dispatch(appendMessage(message)),
-  exitChat: () => dispatch(exitChat()),
-});
-export default withAppToaster(
-  connect(mapStateToProps, mapDispatchToProps)(ChatScreen),
-);
+
+export default connect(mapStateToProps)(ChatScreen);

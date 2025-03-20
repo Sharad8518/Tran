@@ -45,9 +45,10 @@ export const setTransporterProfile = () => {
     axios
       .get('/transporter/account')
       .then(res => {
+        console.log('res transport',res.data.transporter)
         dispatch({
           type: SET_TRANSPORTER_PROFILE,
-          payload: {routes: res.data.routes, profile: res.data.transporter[0]},
+          payload: {routes: res.data.routes, profile: res.data.transporter},
         });
       })
       .catch(error => {
@@ -62,6 +63,7 @@ export const getConsignorDetails = () => {
     axios
       .get('consignor/account/details')
       .then(res => {
+        console.log("consignor",res.data)
         const profile = res.data.data;
         dispatch({
           type: SET_CONSIGNOR_PROFILE,
@@ -93,6 +95,7 @@ export const getConsigneeProfile = () => {
     axios
       .get('/consignee/account')
       .then(res => {
+        console.log("res consigee",res.data)
         dispatch({
           type: SET_CONSIGNEE_PROFILE,
           payload: res.data.result,

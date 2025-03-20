@@ -23,6 +23,7 @@ const EnqListTran = props => {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {
+        console.log('res dropLocationInfo ',res.data.dropLocationInfo)
         const enquiries = res.data.enqInfo.map((e, i) => {
           return {
             ...e,
@@ -44,6 +45,7 @@ const EnqListTran = props => {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(resp => {
+        console.log('resp bids',resp)
         setTimeout(() => {
           navigation.navigate('EnqDetailsTran', {id: id});
         }, 100);
@@ -85,7 +87,7 @@ const EnqListTran = props => {
               fontSize: 14,
               fontFamily: 'Lato-Bold',
             }}>
-            Enquiry # {item._id}
+            Enquiry # {item.enquiryUquid}
           </Text>
           <Text
             style={{
@@ -94,7 +96,7 @@ const EnqListTran = props => {
             }}>
             From: {item.from.location}
             {`\n`}
-            To: {item.to.address}
+            To: {item.to?.address}
           </Text>
           {item.advance !== null && (
             <Text

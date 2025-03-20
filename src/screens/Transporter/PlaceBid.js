@@ -20,7 +20,7 @@ import {
 } from '../../utils/validators';
 import {UnitTypes} from '../../config/variables';
 import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
-import {Dialog, Portal, Checkbox} from 'react-native-paper';
+import {Dialog, Portal, Checkbox,Button} from 'react-native-paper';
 const BidSchema = Yup.object().shape({
   advance: Yup.string()
     .required('Advance is required')
@@ -61,7 +61,7 @@ const PlaceBid = props => {
   const [btnLoader, setBtnLoader] = useState(false);
   useEffect(() => {
     axios
-      .get(`/enquiry?enquiryId=${id}`)
+      .get(`/enquiry/get-enquiry/${id}`)
       .then(res => {
         console.log('res', res);
         const databid = res.data.databid;
@@ -80,7 +80,7 @@ const PlaceBid = props => {
     if (data.estimatedDelivery !== '' && data.bid_rate_type !== '') {
       setBtnLoader(true);
       axios
-        .post('/bid', {
+        .post('/bid/addBid', {
           enquiryId: id,
           advance: data.advance,
           againstBill: data.againstBill,
@@ -98,10 +98,10 @@ const PlaceBid = props => {
         })
         .then(res => {
           if (!res.data.success) {
-            setToast({text: res.data.msg, styles: 'error'});
+            setToast({text: res.data.message, styles: 'error'});
             navigation.navigate('EnqListTran');
           } else {
-            setToast({text: res.data.msg, styles: 'success'});
+            setToast({text: res.data.message, styles: 'success'});
             navigation.navigate('EnqListTran');
           }
           setBtnLoader(false);

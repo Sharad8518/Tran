@@ -37,7 +37,7 @@ const ChangeRoutes = props => {
       <Formik
         onSubmit={data => {
           setLoading(true);
-          const transporterRoutes = data.routes.map(t => ({
+          const transporterRoutes = data.routes?.map(t => ({
             toAddress: t.to,
             fromAddress: t.from,
           }));
@@ -50,7 +50,7 @@ const ChangeRoutes = props => {
             .then(resp => {
               setLoading(false);
               dispatch(setTransporterProfile());
-              setToast({text: resp.data.msg, styles: 'success'});
+              setToast({text: resp.data.message, styles: 'success'});
               navigation.navigate('HomeTrans');
             })
             .catch(error => {
@@ -65,7 +65,7 @@ const ChangeRoutes = props => {
         validationSchema={RoutesSchema}
         enableReinitialize={true}
         initialValues={{
-          routes: routes.map(r => ({from: r.fromAddress, to: r.toAddress})),
+          routes: routes?.map(r => ({from: r.fromAddress, to: r.toAddress})),
         }}
         component={formikProps => (
           <>

@@ -94,7 +94,7 @@ const NewConsignee = props => {
       district: data.location,
     };
     axios
-      .put(`/consignee//update/${data._id}`, payload, {
+      .put(`/consignee/update/${data._id}`, payload, {
         headers: {Authorization: `Bearer ${token}`},
       })
       .then(res => {

@@ -62,7 +62,7 @@ const ShipmentCardConsignee = props => {
           (item.status === 'accepted' || item.status === 'rejected')
             ? 'Order'
             : 'Enquiry'}
-          #{item._id}
+          #{item.enquiryUquid}
         </Text>
         <Text style={{marginTop: hp(1), fontWeight: 'bold'}}>
           {item.to.address}

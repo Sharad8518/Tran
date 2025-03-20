@@ -16,6 +16,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 const TransporterBidCard = props => {
   const {bid, enq} = props;
+
+  console.log('bid',bid)
+
   const navigation = useNavigation();
   return (
     <TouchableOpacity

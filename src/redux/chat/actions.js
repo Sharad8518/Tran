@@ -22,6 +22,7 @@ export const setActiveChatId = (id) => {
             .child(`${id}`)
             .on('value', snap => {
                 const messages = snap.val()
+                console.log('messages',messages)
                 const conversion = objToArray(messages).sort((a, b) => b.timestamp - a.timestamp).map(m => ({ ...m, createdAt: m.timestamp }))
                 dispatch({
                     type: SET_ACTIVE_CHAT_ID,

@@ -97,75 +97,82 @@ const TransporterRegistration = props => {
           pincode: '',
           routes: [{from: '', to: ''}],
         }}
-        onSubmit={data => {
-          setLoading(true);
-          const transporterRoutes = data.routes.map(t => ({
-            toAddress: t.to,
-            fromAddress: t.from,
-          }));
-          const payload = {
-            companyName: data.companyName,
-            address: data.address,
-            pincode: data.pincode,
-            panNumber: data.pan,
-            gstNumber: data.gst,
-            district: data.district,
-            state: data.state,
-            managerName: data.managerName,
-            adminName: data.adminName,
-            truckCount: data.truckCount,
-            userName: params?.username,
-            contact: params?.contact,
-            email: params.email.toLowerCase(),
-            password: params.password,
-            role: params.role,
-          };
 
-          axios
-            .post('/register', payload)
-            .then(res => {
-              setLoading(false);
-              // console.log('fegister response', res.data);
-              if (res.data.success) {
-                const token = res.data.access_token;
-                axios
-                  .post(
-                    '/transporter/routes/add',
-                    {transporterRoutes},
-                    {headers: {Authorization: `Bearer ${token}`}},
-                  )
-                  .then(resp => {
-                    // console.log('add route res', resp)
-                    setToast({
-                      text: 'Registration Done! Please verify your email to continue',
-                      styles: 'success',
-                    });
-                    navigation.navigate('SignIn');
-                  })
-                  .catch(error => {
-                    setToast({
-                      text: 'Registration Done! Add Routes after login.',
-                      styles: 'success',
-                    });
-                    // console.log('add route error', error);
-                    navigation.navigate('SignIn');
-                  });
-              } else {
-                setToast({
-                  text: !!res.data.msg ? res.data.msg : res.data.error,
-                  styles: 'error',
-                });
-              }
-            })
-            .catch(error => {
-              setLoading(false);
-              // console.log('register error', error);
-              setToast({
-                text: errorMessage(error).message,
-                styles: 'error',
-              });
+
+       onSubmit={data => {
+  setLoading(true);
+  
+  // Prepare transporterRoutes correctly
+  const transporterRoutes = data.routes.map(t => ({
+    toAddress: t.to,
+    fromAddress: t.from,
+  }));
+
+  const payload = {
+    email: params.email.toLowerCase(),
+    password: params.password,
+    role: params.role,
+    contact: params?.contact,
+    userName: params?.username,
+    companyName: data.companyName,
+    adminName: data.adminName,
+    address: data.address,
+    pincode: data.pincode,
+    location: "NA",
+    gstNumber: data.gst,
+    district: data.district,
+    managerName: data.managerName,
+    truckCount: data.truckCount,
+    state: data.state,
+    panNumber: data.pan
+  };
+
+  axios
+    .post('/users/register', payload)
+    .then(res => {
+      setLoading(false);
+      console.log('Register response:', res.data);
+
+      if (res.data.success) {
+        const token = res.data.accessToken;
+        console.log("token",token)
+        axios
+          .post(
+            'transporter/routes/add',
+            {transporterRoutes},  // ✅ Pass array directly
+            { headers: { Authorization: `Bearer ${token}` } }
+          )
+          .then(resp => {
+            console.log('Add route response:', resp.data);
+            setToast({
+              text: 'Registration Done! Please verify your email to continue',
+              styles: 'success',
             });
-        }}
+             navigation.navigate('SignIn');
+          })
+          .catch(error => {
+            setToast({
+              text: 'Registration Done! Add Routes after login.',
+              styles: 'success',
+            });
+             navigation.navigate('SignIn');
+          });
+
+      } else {
+        setToast({
+          text: res.data.msg || res.data.error,
+          styles: 'error',
+        });
+      }
+    })
+    .catch(error => {
+      setLoading(false);
+      setToast({
+        text: 'Registration failed. Please try again.',
+        styles: 'error',
+      });
+    });
+}}
       />
     </ScrollView>
   );

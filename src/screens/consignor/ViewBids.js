@@ -15,6 +15,7 @@ const ViewBids = props => {
     axios
       .get(`/bid/enquiry/${enqId}`)
       .then(res => {
+        console.log('res bid',res)
         if (Array.isArray(res.data.Bids)) {
           const bids = res.data.Bids;
           const companyNames = res.data.companyName;
@@ -40,6 +41,8 @@ const ViewBids = props => {
         setLoading(false);
       });
   }, [enqId]);
+
+console.log('bidListTransporter',bidListTransporter)
   return (
     <ScrollView
       style={{
@@ -117,7 +120,7 @@ const ViewBids = props => {
             </Text>
           </View>
         )}
-        {bidListTransporter.length > 0 && (
+        {bidListTransporter.length < 0 && (
           <View
             style={{
               borderRadius: 5,

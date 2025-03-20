@@ -233,7 +233,7 @@ const ConsigneeHome = props => {
                               fontSize: 14,
                               fontFamily: 'Lato-Bold',
                             }}>
-                            Enquiry: #{enq.enq._id}
+                            Enquiry: #{enq.enq.enquiryUquid}
                           </Text>
                           <Text
                             style={{

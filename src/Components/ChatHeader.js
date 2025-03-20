@@ -6,21 +6,23 @@ import {
   Text,
   TouchableOpacity,
   View,
+  SafeAreaView
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import {SafeAreaView} from 'react-native-safe-area-context';
+// import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 
 const ChatHeader = props => {
   const {navigation} = props;
-  const params = props.scene?.route?.params;
+  console.log('props',props.route.params)
+  const params = props.route.params;
   const {details} = params;
   const role = useSelector(store => store.authReducer.role);
-  const previous = props.previous.route.name;
+  // const previous = props.previous.route.name;
   if (Platform.OS === 'android') {
     return (
       <View style={styles.header}>
@@ -65,6 +67,8 @@ const ChatHeader = props => {
       </View>
     );
   }
+
+  console.log('details',details)
   return (
     <SafeAreaView edges={['top']} style={{flex: 1}}>
       <View style={styles.header}>
